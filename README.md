@@ -24,9 +24,6 @@ El juego contiene tres varillas con bloques de diferentes colores. Cada bloque s
 - `R`: rojo
 - `V`: verde
 - `A`: azul
-- `M`: morado
-- `N`: naranja
-- `Y`: amarillo
 
 El jugador debe mover bloques entre las varillas hasta conseguir que cada varilla contenga bloques del mismo color.
 
