@@ -207,27 +207,31 @@ public class JuegoColores {
         return true;
     }
 
-    public boolean moverDisco(int origen, int destino) {
-        if (origen < 0 || origen > 2 || destino < 0 || destino > 2) {
-            return false;
-        }
-
-        if (origen == destino) {
-            return false;
-        }
-
-        if (tamañovarillas[origen] == 0) {
-            return false;
-        }
-
-        if (tamañovarillas[destino] >= capacidadMaxima) {
-            return false;
-        }
-
-        mover(origen, destino, 1);
-        mostrarEstado();
-
-        return true;
+   public boolean moverDisco(int origen, int destino, int cuantos) {
+    if (origen < 0 || origen > 2 || destino < 0 || destino > 2) {
+        return false;
     }
+
+    if (origen == destino) {
+        return false;
+    }
+
+    if (cuantos <= 0) {
+        return false;
+    }
+
+    if (tamañovarillas[origen] == 0) {
+        return false;
+    }
+
+    if (tamañovarillas[destino] >= capacidadMaxima) {
+        return false;
+    }
+
+    mover(origen, destino, cuantos);
+    mostrarEstado();
+
+    return true;
+}
 
 }

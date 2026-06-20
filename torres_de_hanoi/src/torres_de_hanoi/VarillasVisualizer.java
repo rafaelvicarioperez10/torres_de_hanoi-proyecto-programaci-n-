@@ -228,18 +228,38 @@ public class VarillasVisualizer extends JFrame {
         }
     }
 
-    public void realizarMovimiento(int origen, int destino) {
-        boolean valido = juego.moverDisco(origen, destino);
+   public void realizarMovimiento(int origen, int destino) {
+    String respuesta = JOptionPane.showInputDialog(
+            this,
+            "¿Cuántos bloques quieres mover?",
+            "Mover bloques",
+            JOptionPane.QUESTION_MESSAGE
+    );
 
-        if (!valido) {
-            JOptionPane.showMessageDialog(this, "Movimiento no válido");
-            return;
-        }
-
-        panelVarillas.repaint();
-
-        if (juego.juegoCompletado()) {
-            JOptionPane.showMessageDialog(this, "Has completado el juego");
-        }
+    if (respuesta == null) {
+        return;
     }
+
+    int cuantos;
+
+    try {
+        cuantos = Integer.parseInt(respuesta.trim());
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Introduce un número válido");
+        return;
+    }
+
+    boolean valido = juego.moverDisco(origen, destino, cuantos);
+
+    if (!valido) {
+        JOptionPane.showMessageDialog(this, "Movimiento no válido");
+        return;
+    }
+
+    panelVarillas.repaint();
+
+    if (juego.juegoCompletado()) {
+        JOptionPane.showMessageDialog(this, "Has completado el juego");
+    }
+}
 }
