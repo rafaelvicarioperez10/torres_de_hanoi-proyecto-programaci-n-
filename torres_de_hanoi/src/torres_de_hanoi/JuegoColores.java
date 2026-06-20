@@ -228,6 +228,27 @@ public class JuegoColores {
         return false;
     }
 
+    String color = varillas[origen][tamañovarillas[origen] - 1];
+    int bloquesMismoColor = 0;
+
+    for (int i = tamañovarillas[origen] - 1; i >= 0; i--) {
+        if (varillas[origen][i].equals(color)) {
+            bloquesMismoColor++;
+        } else {
+            break;
+        }
+    }
+
+    int espacioDestino = capacidadMaxima - tamañovarillas[destino];
+
+    if (cuantos > bloquesMismoColor) {
+        return false;
+    }
+
+    if (cuantos > espacioDestino) {
+        return false;
+    }
+
     mover(origen, destino, cuantos);
     mostrarEstado();
 

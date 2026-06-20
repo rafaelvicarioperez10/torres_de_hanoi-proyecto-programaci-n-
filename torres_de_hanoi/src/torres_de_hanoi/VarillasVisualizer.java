@@ -252,7 +252,10 @@ public class VarillasVisualizer extends JFrame {
     boolean valido = juego.moverDisco(origen, destino, cuantos);
 
     if (!valido) {
-        JOptionPane.showMessageDialog(this, "Movimiento no válido");
+        JOptionPane.showMessageDialog(
+                this,
+                "Movimiento no válido. Solo puedes mover bloques consecutivos del mismo color y si hay espacio suficiente."
+        );
         return;
     }
 
