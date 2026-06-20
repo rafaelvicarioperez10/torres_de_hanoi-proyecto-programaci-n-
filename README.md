@@ -12,10 +12,10 @@ El proyecto incluye una version por consola y una interfaz grafica desarrollada 
 - Movimiento de bloques entre varillas mediante botones.
 - Posibilidad de mover varios bloques a la vez si son consecutivos y del mismo color.
 - Validacion de movimientos no permitidos.
-- Opcion para cargar una partida guardada.
+- Opción para cargar una partida guardada.
 - Guardado de movimientos en un archivo.
-- Funcion de deshacer el ultimo movimiento.
-- Deteccion de partida completada.
+- Función de deshacer el ultimo movimiento.
+- Detección de partida completada.
 
 ## Funcionamiento del juego
 
