@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JFrame;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JOptionPane;
+import java.awt.BorderLayout;
 
 /**
  *
@@ -22,10 +26,35 @@ public class VarillasVisualizer extends JFrame {
     private List<List<String>> varillas = new ArrayList<>();
     private ConsoleCapturer capturer;
     private volatile boolean running = true;
+    private JuegoColores juego;
 
-    public VarillasVisualizer() {
+    public VarillasVisualizer(JuegoColores juego) {
+        this.juego = juego;
         configurarVentana();
         configurarPanel();
+        JPanel panelBotones = new JPanel();
+
+        JButton btnAtoB = new JButton("A -> B");
+        JButton btnAtoC = new JButton("A -> C");
+        JButton btnBtoA = new JButton("B -> A");
+        JButton btnBtoC = new JButton("B -> C");
+        JButton btnCtoA = new JButton("C -> A");
+        JButton btnCtoB = new JButton("C -> B");
+
+        panelBotones.add(btnAtoB);
+        panelBotones.add(btnAtoC);
+        panelBotones.add(btnBtoA);
+        panelBotones.add(btnBtoC);
+        panelBotones.add(btnCtoA);
+        panelBotones.add(btnCtoB);
+
+        add(panelBotones, BorderLayout.SOUTH);
+        btnAtoB.addActionListener(e -> realizarMovimiento(0, 1));
+        btnAtoC.addActionListener(e -> realizarMovimiento(0, 2));
+        btnBtoA.addActionListener(e -> realizarMovimiento(1, 0));
+        btnBtoC.addActionListener(e -> realizarMovimiento(1, 2));
+        btnCtoA.addActionListener(e -> realizarMovimiento(2, 0));
+        btnCtoB.addActionListener(e -> realizarMovimiento(2, 1));
     }
 
     private void configurarVentana() {
@@ -40,6 +69,7 @@ public class VarillasVisualizer extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
+
                 dibujarVarillas(g);
             }
         };
@@ -47,10 +77,11 @@ public class VarillasVisualizer extends JFrame {
         add(panelVarillas);
     }
 
-    public static VarillasVisualizer iniciar() {
-        VarillasVisualizer visualizador = new VarillasVisualizer();
+    public static VarillasVisualizer iniciar(JuegoColores juego) {
+        VarillasVisualizer visualizador = new VarillasVisualizer(juego);
         visualizador.setVisible(true);
         visualizador.iniciarCaptura();
+        juego.mostrarEstado();
         return visualizador;
     }
 
@@ -197,4 +228,18 @@ public class VarillasVisualizer extends JFrame {
         }
     }
 
+    public void realizarMovimiento(int origen, int destino) {
+        boolean valido = juego.moverDisco(origen, destino);
+
+        if (!valido) {
+            JOptionPane.showMessageDialog(this, "Movimiento no válido");
+            return;
+        }
+
+        panelVarillas.repaint();
+
+        if (juego.juegoCompletado()) {
+            JOptionPane.showMessageDialog(this, "Has completado el juego");
+        }
+    }
 }

@@ -86,9 +86,7 @@ public class JuegoColores {
         this.maxHistorial = maxHistorial;
     }
 
-   
 // METODOS PRINCIPALES
-
     public JuegoColores(String[][] estadoinicial) {
         varillas = new String[3][capacidadMaxima];
         tamañovarillas = new int[3];
@@ -161,29 +159,27 @@ public class JuegoColores {
 
         }
         contadorHistorial--;
-       for(int i = 0; i<3; i++){
-           for (int j = 0; j < capacidadMaxima; j++){
-               varillas [i][j] = historial[contadorHistorial][i][j];
-           }
-           tamañovarillas[i] = historialTamaños[contadorHistorial][i];
-       }
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < capacidadMaxima; j++) {
+                varillas[i][j] = historial[contadorHistorial][i][j];
+            }
+            tamañovarillas[i] = historialTamaños[contadorHistorial][i];
+        }
         System.out.println("movimiento deshecho");
     }
 // guarda el estado actual en el historial
 
     public void guardarEstado() {
-        for(int i = 0; i<3; i++){
-            for(int j = 0; j<capacidadMaxima; j++){
-                historial[contadorHistorial][i][j]= varillas [i][j];
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < capacidadMaxima; j++) {
+                historial[contadorHistorial][i][j] = varillas[i][j];
             }
             historialTamaños[contadorHistorial][i] = tamañovarillas[i];
         }
         contadorHistorial++;
     }
 
-
 // comprueba si todos los bloques de una varilla son del mismo color
-
     private boolean todosiguales(int indiceVarilla) {
 // si la varilla no tiene bloques, no cuenta como completa
         if (tamañovarillas[indiceVarilla] == 0) {
@@ -208,6 +204,29 @@ public class JuegoColores {
                 return false;
             }
         }
+        return true;
+    }
+
+    public boolean moverDisco(int origen, int destino) {
+        if (origen < 0 || origen > 2 || destino < 0 || destino > 2) {
+            return false;
+        }
+
+        if (origen == destino) {
+            return false;
+        }
+
+        if (tamañovarillas[origen] == 0) {
+            return false;
+        }
+
+        if (tamañovarillas[destino] >= capacidadMaxima) {
+            return false;
+        }
+
+        mover(origen, destino, 1);
+        mostrarEstado();
+
         return true;
     }
 

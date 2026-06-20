@@ -4,7 +4,7 @@
  */
 package torres_de_hanoi;
 
-import java.util.Scanner;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -16,34 +16,36 @@ public class Torres_de_hanoi {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // Torres de hanoi
-       VarillasVisualizer vv = VarillasVisualizer.iniciar();
-       /*Esto ultimo es para visualizar las varillas de manera gráfica*/
-        Scanner sc = new Scanner(System.in);
+
         GestorArchivos gestor = new GestorArchivos();
 
-        System.out.println("¿Desea cargar la partida? (S/N)");
-        String respuesta = sc.nextLine().trim().toUpperCase();
+        int respuesta = JOptionPane.showConfirmDialog(
+                null,
+                "¿Desea cargar la partida?",
+                "Cargar partida",
+                JOptionPane.YES_NO_OPTION
+        );
+
         String[][] estadoinicial = null;
 
-        if (respuesta.equals("S")) {
-            System.out.print("introduce el nombre del fichero: ");
-            String nombre = sc.nextLine().trim();
-            estadoinicial = gestor.cargar(nombre);
-            System.out.println("Estado cargado desde: " + nombre);
+        if (respuesta == JOptionPane.YES_OPTION) {
+            String nombre = JOptionPane.showInputDialog(
+                    null,
+                    "Introduce el nombre del fichero:",
+                    "Cargar partida",
+                    JOptionPane.QUESTION_MESSAGE
+            );
 
+            if (nombre != null && !nombre.trim().isEmpty()) {
+                estadoinicial = gestor.cargar(nombre.trim());
+                JOptionPane.showMessageDialog(null, "Estado cargado desde: " + nombre);
+            }
         }
+
         JuegoColores juego = new JuegoColores(estadoinicial);
 
         gestor.iniciarGrabacion("partida_guardada.txt");
-        JuegoManager manager = new JuegoManager(sc, juego, gestor);
-        manager.iniciarJuego();
-        gestor.detenerGrabacion();
-        sc.close();
-        vv.detener(); // ES PARA VISUALIZAR LAS VARILLAS DE MANERA GRÁFICA
 
-        
+        VarillasVisualizer vv = VarillasVisualizer.iniciar(juego);
     }
-
-   
 }

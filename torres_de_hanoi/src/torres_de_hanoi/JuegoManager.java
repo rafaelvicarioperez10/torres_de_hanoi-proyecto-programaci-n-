@@ -10,7 +10,6 @@ import java.util.Scanner;
  *
  * @author rafae
  */
-
 public class JuegoManager {
 
     // ATRIBUTOS
