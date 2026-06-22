@@ -13,7 +13,7 @@ import java.util.logging.Logger;
  * guarda el historial para poder deshacer jugadas y comprueba si la partida ha
  * sido completada correctamente.
  *
- * @author rafae
+ * @author Rafael Vicario Pérez
  */
 public class JuegoColores {
 // ATRIBUTOS

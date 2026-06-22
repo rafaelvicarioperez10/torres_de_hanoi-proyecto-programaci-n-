@@ -15,7 +15,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * linea escrita en una cola. El visualizador usa esas lineas para actualizar
  * el dibujo de las varillas.
  *
- * @author rafae
+ * @author Rafael Vicario Pérez
  */
 public class ConsoleCapturer {
 

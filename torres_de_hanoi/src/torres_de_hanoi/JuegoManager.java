@@ -12,7 +12,7 @@ import java.util.Scanner;
  * Lee comandos del usuario, muestra el estado de la partida, permite mover
  * bloques, deshacer movimientos y salir desde la terminal.
  *
- * @author rafae
+ * @author Rafael Vicario Pérez
  */
 public class JuegoManager {
 

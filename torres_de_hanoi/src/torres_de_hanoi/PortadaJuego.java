@@ -8,7 +8,8 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * @author rafae Ventana inicial del juego.
+ * @author Rafael Vicario Pérez 
+ * Ventana inicial del juego.
  *
  * Muestra una portada con el titulo del juego y botones para iniciar una nueva
  * partida, cargar una partida guardada o salir del programa.

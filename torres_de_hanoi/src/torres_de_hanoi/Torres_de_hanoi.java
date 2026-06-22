@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities;
  * Se encarga de iniciar el programa, preguntar si se desea cargar una partida,
  * crear los objetos principales del juego y abrir la interfaz grafica.
  *
- * @author rafae
+ * @author Rafael Vicario Pérez
  */
 public class Torres_de_hanoi {
 

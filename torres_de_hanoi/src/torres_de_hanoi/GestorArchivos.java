@@ -17,7 +17,7 @@ import java.io.FileReader;
  * Permite iniciar una grabacion de texto, escribir datos de la partida,
  * cerrar la grabacion y cargar un estado inicial desde un archivo.
  *
- * @author rafae
+ * @author Rafael Vicario Pérez
  */
 public class GestorArchivos {
 

@@ -23,7 +23,7 @@ import java.awt.BorderLayout;
  * entre varillas, permite deshacer el ultimo movimiento y cerrar la partida de
  * forma controlada.
  *
- * @author rafae
+ * @author Rafael Vicario Pérez
  */
 public class VarillasVisualizer extends JFrame {
 
