@@ -7,6 +7,10 @@ package torres_de_hanoi;
 import java.util.Scanner;
 
 /**
+ * Gestiona la version por consola del juego.
+ *
+ * Lee comandos del usuario, muestra el estado de la partida, permite mover
+ * bloques, deshacer movimientos y salir desde la terminal.
  *
  * @author rafae
  */
@@ -18,15 +22,31 @@ public class JuegoManager {
     private GestorArchivos gestor;
 
     // constructor
+    /**
+     * Crea un gestor de juego vacio.
+     */
     public JuegoManager() {
     }
 
+    /**
+     * Crea un gestor de juego por consola con sus dependencias principales.
+     *
+     * @param sc lector de entrada por consola
+     * @param juego objeto con la logica y el estado de la partida
+     * @param gestor objeto encargado de guardar datos de la partida
+     */
     public JuegoManager(Scanner sc, JuegoColores juego, GestorArchivos gestor) {
         this.sc = sc;
         this.juego = juego;
         this.gestor = gestor;
     }
 
+    /**
+     * Inicia el bucle principal del modo consola.
+     *
+     * Muestra el estado del juego, solicita movimientos, permite deshacer y
+     * termina cuando la partida se completa o el usuario decide salir.
+     */
     public void iniciarJuego() {
         mostrarBienvenida();
         while (true) {
@@ -61,6 +81,9 @@ public class JuegoManager {
         }
     }
 
+    /**
+     * Muestra el mensaje inicial del modo consola.
+     */
     private void mostrarBienvenida() {
         System.out.println("JUEGO DE TORRES DE COLORES");
         System.out.println("colores: R=Rojo, V=Verde, A=Azul");

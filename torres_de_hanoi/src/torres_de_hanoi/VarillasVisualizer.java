@@ -17,6 +17,11 @@ import javax.swing.JOptionPane;
 import java.awt.BorderLayout;
 
 /**
+ * Ventana grafica encargada de representar visualmente las varillas del juego.
+ *
+ * Esta clase dibuja los bloques de colores, ofrece botones para mover bloques
+ * entre varillas, permite deshacer el ultimo movimiento y cerrar la partida de
+ * forma controlada.
  *
  * @author rafae
  */
@@ -27,9 +32,19 @@ public class VarillasVisualizer extends JFrame {
     private ConsoleCapturer capturer;
     private volatile boolean running = true;
     private JuegoColores juego;
+    private GestorArchivos gestor;
 
-    public VarillasVisualizer(JuegoColores juego) {
+    /**
+     * Crea la ventana del visualizador y conecta la interfaz con la logica del
+     * juego.
+     *
+     * @param juego objeto que contiene el estado y las reglas de la partida
+     * @param gestor objeto encargado de gestionar la grabacion o carga de
+     * archivos
+     */
+    public VarillasVisualizer(JuegoColores juego, GestorArchivos gestor) {
         this.juego = juego;
+        this.gestor = gestor;
         configurarVentana();
         configurarPanel();
         JPanel panelBotones = new JPanel();
@@ -40,6 +55,8 @@ public class VarillasVisualizer extends JFrame {
         JButton btnBtoC = new JButton("B -> C");
         JButton btnCtoA = new JButton("C -> A");
         JButton btnCtoB = new JButton("C -> B");
+        JButton btnDeshacer = new JButton("Deshacer");
+        JButton btnSalir = new JButton("Salir");
 
         panelBotones.add(btnAtoB);
         panelBotones.add(btnAtoC);
@@ -47,6 +64,8 @@ public class VarillasVisualizer extends JFrame {
         panelBotones.add(btnBtoC);
         panelBotones.add(btnCtoA);
         panelBotones.add(btnCtoB);
+        panelBotones.add(btnDeshacer);
+        panelBotones.add(btnSalir);
 
         add(panelBotones, BorderLayout.SOUTH);
         btnAtoB.addActionListener(e -> realizarMovimiento(0, 1));
@@ -55,8 +74,13 @@ public class VarillasVisualizer extends JFrame {
         btnBtoC.addActionListener(e -> realizarMovimiento(1, 2));
         btnCtoA.addActionListener(e -> realizarMovimiento(2, 0));
         btnCtoB.addActionListener(e -> realizarMovimiento(2, 1));
+        btnDeshacer.addActionListener(e -> deshacerMovimiento());
+        btnSalir.addActionListener(e -> salirDelJuego());
     }
 
+    /**
+     * Configura las propiedades principales de la ventana.
+     */
     private void configurarVentana() {
         setTitle("Visualizador de Varillas");
         setSize(800, 400);
@@ -64,6 +88,9 @@ public class VarillasVisualizer extends JFrame {
         setLocationRelativeTo(null);
     }
 
+    /**
+     * Crea el panel principal donde se dibujan las varillas y los bloques.
+     */
     private void configurarPanel() {
         panelVarillas = new JPanel() {
             @Override
@@ -77,14 +104,25 @@ public class VarillasVisualizer extends JFrame {
         add(panelVarillas);
     }
 
-    public static VarillasVisualizer iniciar(JuegoColores juego) {
-        VarillasVisualizer visualizador = new VarillasVisualizer(juego);
+    /**
+     * Crea, muestra e inicia el visualizador grafico del juego.
+     *
+     * @param juego objeto con el estado actual de la partida
+     * @param gestor objeto encargado de la gestion de archivos
+     * @return instancia del visualizador creado
+     */
+    public static VarillasVisualizer iniciar(JuegoColores juego, GestorArchivos gestor) {
+        VarillasVisualizer visualizador = new VarillasVisualizer(juego, gestor);
         visualizador.setVisible(true);
         visualizador.iniciarCaptura();
         juego.mostrarEstado();
         return visualizador;
     }
 
+    /**
+     * Inicia un hilo encargado de leer la salida de consola y actualizar la
+     * interfaz.
+     */
     private void iniciarCaptura() {
         capturer = new ConsoleCapturer();
         Thread hiloCaptura = new Thread(() -> {
@@ -99,6 +137,12 @@ public class VarillasVisualizer extends JFrame {
         hiloCaptura.start();
     }
 
+    /**
+     * Procesa una linea de texto procedente de consola para detectar estados de
+     * varillas.
+     *
+     * @param linea texto capturado de la salida de consola
+     */
     private void procesarLinea(String linea) {
         Pattern pattern = Pattern.compile("(?i)Varilla\\s*(\\d+):\\s*\\[([^\\]]*)\\]");
         Matcher matcher = pattern.matcher(linea.trim());
@@ -107,6 +151,12 @@ public class VarillasVisualizer extends JFrame {
         }
     }
 
+    /**
+     * Actualiza la lista interna de varillas a partir del texto detectado.
+     *
+     * @param matcher resultado de la expresion regular con numero y contenido
+     * de varilla
+     */
     private void actualizarVarillas(Matcher matcher) {
         int numVarillas = Integer.parseInt(matcher.group(1)) - 1;
         String contenido = matcher.group(2).trim();
@@ -121,6 +171,13 @@ public class VarillasVisualizer extends JFrame {
         SwingUtilities.invokeLater(() -> panelVarillas.repaint());
     }
 
+    /**
+     * Convierte el contenido textual de una varilla en una lista de codigos de
+     * color.
+     *
+     * @param contenido texto con los codigos de colores separados por espacios
+     * @return lista de colores detectados
+     */
     private List<String> parsearColores(String contenido) {
         List<String> colores = new ArrayList<>();
         contenido = contenido.trim(); // elimina espacios al inicio y final
@@ -134,6 +191,11 @@ public class VarillasVisualizer extends JFrame {
         return colores;
     }
 
+    /**
+     * Dibuja todas las varillas y sus bloques en el panel principal.
+     *
+     * @param g contexto grafico utilizado por Swing para pintar
+     */
     private void dibujarVarillas(Graphics g) {
         List<List<String>> copiaVarillas;
         synchronized (varillas) {
@@ -159,6 +221,15 @@ public class VarillasVisualizer extends JFrame {
         }
     }
 
+    /**
+     * Dibuja una varilla concreta con su base, poste, numero y bloques.
+     *
+     * @param g contexto grafico 2D
+     * @param centroX posicion horizontal del centro de la varilla
+     * @param altoPanel altura disponible del panel
+     * @param colores lista de bloques que contiene la varilla
+     * @param numVarillas numero visible de la varilla
+     */
     private void dibujarVarillas(Graphics2D g, int centroX, int altoPanel, List<String> colores, int numVarillas) {
         int anchoBase = 120;
         int altoBase = 10;
@@ -181,6 +252,17 @@ public class VarillasVisualizer extends JFrame {
         }
     }
 
+    /**
+     * Dibuja un bloque individual con su color, borde, sombra y letra
+     * identificadora.
+     *
+     * @param g contexto grafico 2D
+     * @param centroX posicion horizontal del centro del bloque
+     * @param y posicion vertical de referencia
+     * @param ancho ancho del bloque
+     * @param alto alto del bloque
+     * @param colorCodigo codigo textual del color del bloque
+     */
     private void dibujarBloque(Graphics2D g, int centroX, int y, int ancho, int alto, String colorCodigo) {
         Color color = obtenerColor(colorCodigo);
 // Sombra
@@ -202,6 +284,12 @@ public class VarillasVisualizer extends JFrame {
         g.drawString(letra, centroX - anchoTexto / 2, y - alto / 2 + 7);
     }
 
+    /**
+     * Traduce un codigo de color a un objeto Color usado para pintar el bloque.
+     *
+     * @param codigo letra que representa el color
+     * @return color asociado al codigo recibido
+     */
     private Color obtenerColor(String codigo) {
         switch (codigo.toUpperCase()) {
             case "R":
@@ -221,6 +309,9 @@ public class VarillasVisualizer extends JFrame {
         }
     }
 
+    /**
+     * Detiene la captura de consola y restaura la salida estandar original.
+     */
     public void detener() {
         running = false;
         if (capturer != null) {
@@ -228,41 +319,80 @@ public class VarillasVisualizer extends JFrame {
         }
     }
 
-   public void realizarMovimiento(int origen, int destino) {
-    String respuesta = JOptionPane.showInputDialog(
-            this,
-            "¿Cuántos bloques quieres mover?",
-            "Mover bloques",
-            JOptionPane.QUESTION_MESSAGE
-    );
-
-    if (respuesta == null) {
-        return;
-    }
-
-    int cuantos;
-
-    try {
-        cuantos = Integer.parseInt(respuesta.trim());
-    } catch (NumberFormatException e) {
-        JOptionPane.showMessageDialog(this, "Introduce un número válido");
-        return;
-    }
-
-    boolean valido = juego.moverDisco(origen, destino, cuantos);
-
-    if (!valido) {
-        JOptionPane.showMessageDialog(
+    /**
+     * Solicita la cantidad de bloques y ejecuta un movimiento desde la
+     * interfaz.
+     *
+     * @param origen indice de la varilla origen
+     * @param destino indice de la varilla destino
+     */
+    public void realizarMovimiento(int origen, int destino) {
+        String respuesta = JOptionPane.showInputDialog(
                 this,
-                "Movimiento no válido. Solo puedes mover bloques consecutivos del mismo color y si hay espacio suficiente."
+                "¿Cuántos bloques quieres mover?",
+                "Mover bloques",
+                JOptionPane.QUESTION_MESSAGE
         );
-        return;
+
+        if (respuesta == null) {
+            return;
+        }
+
+        int cuantos;
+
+        try {
+            cuantos = Integer.parseInt(respuesta.trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Introduce un número válido");
+            return;
+        }
+
+        boolean valido = juego.moverDisco(origen, destino, cuantos);
+
+        if (!valido) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Movimiento no válido. Solo puedes mover bloques consecutivos del mismo color y si hay espacio suficiente."
+            );
+            return;
+        }
+
+        panelVarillas.repaint();
+
+        if (juego.juegoCompletado()) {
+            JOptionPane.showMessageDialog(this, "Has completado el juego");
+        }
     }
 
-    panelVarillas.repaint();
-
-    if (juego.juegoCompletado()) {
-        JOptionPane.showMessageDialog(this, "Has completado el juego");
+    /**
+     * Deshace el ultimo movimiento realizado y actualiza la representacion
+     * grafica.
+     */
+    public void deshacerMovimiento() {
+        juego.deshacer();
+        juego.mostrarEstado();
+        panelVarillas.repaint();
     }
-}
+
+    /**
+     * Solicita confirmacion y cierra el juego de forma controlada.
+     */
+    public void salirDelJuego() {
+        int opcion = JOptionPane.showConfirmDialog(
+                this,
+                "¿Seguro que quieres salir del juego?",
+                "Salir",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (opcion == JOptionPane.YES_OPTION) {
+            if (gestor != null) {
+                gestor.detenerGrabacion();
+            }
+
+            detener();
+            dispose();
+            System.exit(0);
+        }
+    }
 }
